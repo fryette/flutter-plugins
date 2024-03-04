@@ -857,7 +857,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         return unit
     }
     
-    func dataTypeLookUp(key: String) -> HKSampleType {
+    public func dataTypeLookUp(key: String) -> HKSampleType {
         guard let dataType_ = dataTypesDict[key] else {
             return HKSampleType.quantityType(forIdentifier: .bodyMass)!
         }
