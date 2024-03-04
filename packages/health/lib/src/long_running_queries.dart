@@ -36,7 +36,7 @@ class LongRunningQueries {
 void healthKitEntryPoint(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
-  print('fryette BEFORE DART CODE EXECUTION');
+  print('BEFORE DART CODE EXECUTION');
 
   final handle = int.parse(args.first);
   final callbackHandle = CallbackHandle.fromRawHandle(handle);
@@ -48,5 +48,5 @@ void healthKitEntryPoint(List<String> args) async {
     onStart?.call(HealthDataType.values.firstWhere((e) => e.name == event));
   });
 
-  print('fryette AFTER DART CODE EXECUTION');
+  print('AFTER DART CODE EXECUTION');
 }
