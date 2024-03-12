@@ -475,6 +475,20 @@ class HealthFactory {
     return removeDuplicates(dataPoints);
   }
 
+  /// Get Biological Sex
+  Future<String> getBiologicalSex() async {
+    return await _channel.invokeMethod<String>('getBiologicalSex') ?? 'notSet';
+  }
+
+  /// Returns Date of Birth
+  Future<DateTime?> getDateOfBirth() async {
+    final result = await _channel.invokeMethod<int?>('getDateOfBirth');
+    if (result != null) {
+      return DateTime.fromMillisecondsSinceEpoch(result);
+    }
+    return null;
+  }
+
   /// Prepares a query, i.e. checks if the types are available, etc.
   Future<List<HealthDataPoint>> _prepareQuery(
       DateTime startTime, DateTime endTime, HealthDataType dataType) async {

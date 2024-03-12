@@ -143,7 +143,10 @@ public class LongRunningQuery: NSObject, FlutterStreamHandler, FlutterPlugin {
 //                    localNotificationManager.scheduleNotification(notification)
                                         
                     guard let self = self else { return }
-                    self.eventSink?(sampleTypeKeyValue.key)
+                    
+                    DispatchQueue.main.async {
+                        self.eventSink?(sampleTypeKeyValue.key)
+                    }
                     
                     completion()
                 }

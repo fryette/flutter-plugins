@@ -56,6 +56,10 @@ enum HealthDataType {
   IRREGULAR_HEART_RATE_EVENT,
   ELECTRODERMAL_ACTIVITY,
   ELECTROCARDIOGRAM,
+
+  // BODY
+  BIOLOGICAL_SEX,
+  DATE_OF_BIRTH
 }
 
 /// Access types for Health Data.

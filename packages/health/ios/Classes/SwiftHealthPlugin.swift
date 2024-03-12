@@ -10,6 +10,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
     var headacheType = Set<HKSampleType>()
     var allDataTypes = Set<HKSampleType>()
     var dataTypesDict: [String: HKSampleType] = [:]
+    var characteristicTypesDict: [String: HKCharacteristicType] = [:]
     var unitDict: [String: HKUnit] = [:]
     var workoutActivityTypeMap: [String: HKWorkoutActivityType] = [:]
     
@@ -62,7 +63,9 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
     let HEADACHE_SEVERE = "HEADACHE_SEVERE"
     let ELECTROCARDIOGRAM = "ELECTROCARDIOGRAM"
     let NUTRITION = "NUTRITION"
-    
+    let BIOLOGICAL_SEX = "BIOLOGICAL_SEX"
+    let DATE_OF_BIRTH = "DATE_OF_BIRTH"
+        
     // Health Unit types
     // MOLE_UNIT_WITH_MOLAR_MASS, // requires molar mass input - not supported yet
     // MOLE_UNIT_WITH_PREFIX_MOLAR_MASS, // requires molar mass & prefix input - not supported yet
@@ -141,6 +144,16 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         /// Handle getData
         else if call.method.elementsEqual("getData") {
             getData(call: call, result: result)
+        }
+        
+        /// Handle getBiologicalSex
+        else if call.method.elementsEqual("getBiologicalSex"){
+            getBiologicalSex(call: call, result: result)
+        }
+        
+        /// Handle getBiologicalSex
+        else if call.method.elementsEqual("getDateOfBirth"){
+            getDateOfBirth(call: call, result: result)
         }
         
         /// Handle getTotalStepsInInterval
@@ -251,7 +264,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             throw PluginError(message: "Invalid Arguments!")
         }
         
-        var typesToRead = Set<HKSampleType>()
+        var typesToRead = Set<HKObjectType>()
         var typesToWrite = Set<HKSampleType>()
         for (index, key) in types.enumerated() {
             if (key == NUTRITION) {
@@ -264,6 +277,8 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                 typesToWrite.insert(carbsType);
                 typesToWrite.insert(proteinType);
                 typesToWrite.insert(fatType);
+            } else if key == DATE_OF_BIRTH || key == BIOLOGICAL_SEX{
+                typesToRead.insert(characteristicTypesDict[key]!)
             } else {
                 let dataType = dataTypeLookUp(key: key)
                 let access = permissions[index]
@@ -559,6 +574,49 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         }
         
         HKHealthStore().execute(deleteQuery)
+    }
+    
+    func getBiologicalSex(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        var resultStr = "notSet"
+        
+        do {
+            let sex = try healthStore.biologicalSex()
+            
+            switch sex.biologicalSex {
+            case .notSet:
+                resultStr = "notSet"
+            case .female:
+                resultStr = "female"
+            case .male:
+                resultStr = "male"
+            case .other:
+                resultStr = "other"
+            @unknown default:
+                resultStr = "notSet"
+            }
+        }
+        catch {}
+        
+        DispatchQueue.main.async {
+            result(resultStr)
+        }
+    }
+    
+    func getDateOfBirth(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        var resultValue : Int? = nil
+        
+        do {
+            let dateOfBirth = try healthStore.dateOfBirthComponents()
+            if let date = dateOfBirth.date {
+                resultValue = Int(date.timeIntervalSince1970 * 1000)
+            }
+        }
+        catch {
+        }
+        
+        DispatchQueue.main.async {
+            result(resultValue)
+        }
     }
     
     func getData(call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -1056,6 +1114,9 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             dataTypesDict[WORKOUT] = HKSampleType.workoutType()
             dataTypesDict[NUTRITION] = HKSampleType.correlationType(
                 forIdentifier: .food)!
+            
+            characteristicTypesDict[DATE_OF_BIRTH] = HKSampleType.characteristicType(forIdentifier: .dateOfBirth)!
+            characteristicTypesDict[BIOLOGICAL_SEX] = HKSampleType.characteristicType(forIdentifier: .biologicalSex)!
             
             healthDataTypes = Array(dataTypesDict.values)
         }
