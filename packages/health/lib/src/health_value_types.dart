@@ -21,7 +21,7 @@ class NumericHealthValue extends HealthValue {
 
   /// Parses a json object to [NumericHealthValue]
   factory NumericHealthValue.fromJson(json) {
-    return NumericHealthValue(num.parse(json['numericValue']));
+    return NumericHealthValue(num.parse(json['value']));
   }
 
   Map<String, dynamic> toJson() => {
@@ -35,6 +35,41 @@ class NumericHealthValue extends HealthValue {
 
   @override
   int get hashCode => numericValue.hashCode;
+}
+
+class GlucoseHealthValue extends HealthValue {
+  final num? meal;
+  final num value;
+
+  GlucoseHealthValue(this.value, this.meal);
+
+  @override
+  String toString() {
+    return 'value: $value, meal: $meal';
+  }
+
+  /// Parses a json object to [NumericHealthValue]
+  factory GlucoseHealthValue.fromJson(json) {
+    return GlucoseHealthValue(
+      json['value'],
+      json['meal'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'value': value.toString(),
+        'meal': meal.toString(),
+      };
+
+  @override
+  bool operator ==(Object o) {
+    return o is GlucoseHealthValue &&
+        this.value == o.value &&
+        this.meal == o.meal;
+  }
+
+  @override
+  int get hashCode => value.hashCode;
 }
 
 /// A [HealthValue] object for audiograms

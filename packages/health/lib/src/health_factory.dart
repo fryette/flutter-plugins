@@ -557,6 +557,8 @@ class HealthFactory {
         value = ElectrocardiogramHealthValue.fromJson(e);
       } else if (dataType == HealthDataType.NUTRITION) {
         value = NutritionHealthValue.fromJson(e);
+      } else if (dataType == HealthDataType.BLOOD_GLUCOSE) {
+        value = GlucoseHealthValue.fromJson(e);
       } else {
         value = NumericHealthValue(e['value']);
       }
