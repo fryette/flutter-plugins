@@ -927,7 +927,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         return dataType_
     }
     
-    func initializeTypes() {
+    public func initializeTypes() {
         // Initialize units
         unitDict[GRAM] = HKUnit.gram()
         unitDict[KILOGRAM] = HKUnit.gramUnit(with: .kilo)
